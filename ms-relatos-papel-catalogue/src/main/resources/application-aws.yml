@@ -1,0 +1,63 @@
+spring:
+  application:
+    name: ms-relatos-papel-catalogue
+
+  # Configuración para RDS MySQL
+  datasource:
+    url: jdbc:mysql://books-catalogue.cwpgs64eoakw.us-east-1.rds.amazonaws.com:3306/books_catalogue
+    username: admin
+    password: BooksAdmin123!
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      idle-timeout: 300000
+      connection-timeout: 30000
+      max-lifetime: 1200000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate  # Cambio importante: validate en lugar de update
+    show-sql: false  # False en producción
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false  # False en producción
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: NON_NULL
+    date-format: yyyy-MM-dd
+    time-zone: America/Bogota
+
+# Puerto estándar para backend
+server:
+  port: 8080
+
+
+
+# Configuración para AWS
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+  metrics:
+    export:
+      cloudwatch:
+        enabled: false  # Cambiar a true si quieres métricas en CloudWatch
+
+# Logging para AWS
+logging:
+  level:
+    com.relatospapel: INFO
+    org.springframework.web: WARN
+    org.hibernate: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
